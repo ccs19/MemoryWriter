@@ -4,7 +4,7 @@
 //
 
 #pragma once
-
+#include "easylogging++.h"
 #include "targetver.h"
 
 #include <stdio.h>

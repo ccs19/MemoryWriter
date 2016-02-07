@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "stdafx.h"
 #include <vector>
 
 namespace plexerCode {
@@ -6,10 +7,15 @@ namespace plexerCode {
 	public:
 		static HANDLE getProcHandleByName(const char*);
 		static HANDLE getProcHandleByPid(DWORD pid);
-		static std::vector<HANDLE> getAllProcHandles();
+		static std::vector<DWORD>* getAllProcHandles();
+		static DWORD getLastError() { return lastError_; }
 
 	private:
-		static const unsigned long BUFF_SIZE = 256;
+		static void setLastError() { lastError_ = GetLastError(); }
+		static void cleanGetAllProcHandles(std::vector<DWORD>* pidsVector, DWORD* pidsArray, bool bail);
+
+		static const unsigned long BUFF_SIZE = 1024;
 		static DWORD lastError_;
 	};
 };
+

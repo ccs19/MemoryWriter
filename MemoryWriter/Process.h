@@ -7,18 +7,18 @@ namespace plexerCode {
 	public:
 		Process();
 		~Process();
-		bool detachProcess() const;
-		bool isHandleOpen() const;
-		bool attachProcess(std::string name);
-		bool attachProcess(unsigned long pid);
+		BOOL detachProcess() const;
+		BOOL isHandleOpen() const;
+		BOOL attachProcess(std::string name);
+		BOOL attachProcess(DWORD pid);
 		DWORD getLastError() const;
 		std::string getFriendlyErrMsg() const;
 	private:
 		HANDLE procHandle_;
 		unsigned long processNum_;
-		bool lastOpSucceed_;
+		BOOL lastOpSucceed_;
 		DWORD lastError_;
-		bool handleOpen_;
+		BOOL handleOpen_;
 		void setLastError();
 		void init();
 	};

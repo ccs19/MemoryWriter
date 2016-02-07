@@ -9,19 +9,19 @@ plexerCode::Process::~Process() {
 	CloseHandle(procHandle_);
 }
 
-bool plexerCode::Process::detachProcess() const {
-	auto result = false;
+BOOL plexerCode::Process::detachProcess() const {
+	BOOL result = false;
 	if(handleOpen_) {
 		result = CloseHandle(procHandle_);
 	}
 	return result;
 }
 
-bool plexerCode::Process::isHandleOpen() const {
+BOOL plexerCode::Process::isHandleOpen() const {
 	return handleOpen_;
 }
 
-bool plexerCode::Process::attachProcess(std::string name) {
+BOOL plexerCode::Process::attachProcess(std::string name) {
 	procHandle_ = OpenProcess(PROCESS_ALL_ACCESS, true, 19352);
 	if(procHandle_ == nullptr) {
 		lastOpSucceed_ = false;
@@ -33,7 +33,7 @@ bool plexerCode::Process::attachProcess(std::string name) {
 	return lastOpSucceed_;
 }
 
-bool plexerCode::Process::attachProcess(DWORD pid) {
+BOOL plexerCode::Process::attachProcess(DWORD pid) {
 	procHandle_ = OpenProcess(PROCESS_ALL_ACCESS, true, pid);
 	if (procHandle_ == nullptr) {
 		lastOpSucceed_ = false;
