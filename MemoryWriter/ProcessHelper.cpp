@@ -28,7 +28,8 @@ namespace plexerCode {
 		}
 		else {
 			while (true) {
-				if (bytesReturned >= buffSize) {
+				if ((bytesReturned/sizeof DWORD) >= buffSize) {
+					LOG(DEBUG) << "Allocating more memory for pid buffer. Tried " << buffSize << ". Will try " << buffSize * 2;
 					cleanGetAllProcHandles(nullptr, pidsArray, false);
 					buffSize *= 2;
 					pidsArray = initDWord(buffSize);

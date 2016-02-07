@@ -10,6 +10,8 @@ INITIALIZE_EASYLOGGINGPP
 
 int main()
 {
+	el::Configurations conf("logger.cfg");
+	el::Loggers::reconfigureAllLoggers(conf);
 	plexerCode::Process process;
 	if(!process.attachProcess("HelloWorldLoop")) {
 		//std::cout << process.getFriendlyErrMsg() << std::endl;
@@ -18,7 +20,7 @@ int main()
 	}
 	auto pids = plexerCode::ProcessHelper::getAllProcHandles();
 	for (auto i = (*pids).begin(); i != (*pids).end(); ++i) {
-		std::cout << *i << std::endl;
+		LOG(DEBUG) << *i << std::endl;
 	}
 	getchar();
 }
