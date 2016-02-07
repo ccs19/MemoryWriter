@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D:\CDev\easyloggingpp_9.80\easylogging++.h" />
+    <ClInclude Include="logger.cfg" />
     <ClInclude Include="plexerCodeUtil.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="ProcessConstants.h" />

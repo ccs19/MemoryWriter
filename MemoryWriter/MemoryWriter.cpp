@@ -7,7 +7,7 @@
 
 
 INITIALIZE_EASYLOGGINGPP
-
+using namespace plexerCode;
 int main()
 {
 	el::Configurations conf("logger.cfg");
@@ -18,10 +18,15 @@ int main()
 	}else {
 		LOG(INFO) << "SUCCESS!";
 	}
-	auto pids = plexerCode::ProcessHelper::getAllProcHandles();
+	auto pids = plexerCode::ProcessHelper::getAllProcPids();
 	for (auto i = (*pids).begin(); i != (*pids).end(); ++i) {
-		LOG(DEBUG) << *i << std::endl;
+		
+	}
+	HANDLE result = ProcessHelper::getProcHandleByName(L"HelloWorldLoop");
+	if(result!= nullptr) {
+		LOG(DEBUG) << "FOUND!";
 	}
 	getchar();
 }
+
 

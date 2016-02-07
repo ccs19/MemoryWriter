@@ -5,15 +5,14 @@
 namespace plexerCode {
 	class ProcessHelper {
 	public:
-		static HANDLE getProcHandleByName(const char*);
-		static HANDLE getProcHandleByPid(DWORD pid);
-		static std::vector<DWORD>* getAllProcHandles();
+		static HANDLE getProcHandleByName(TCHAR* fileName);
+		static std::vector<DWORD>* getAllProcPids();
 		static DWORD getLastError() { return lastError_; }
 
 	private:
+		static bool compareFileNames(HANDLE* result, TCHAR* fileName);
 		static void setLastError() { lastError_ = GetLastError(); }
-		static void cleanGetAllProcHandles(std::vector<DWORD>* pidsVector, DWORD* pidsArray, bool bail);
-
+		static void cleanGetAllProcPids(std::vector<DWORD>* pidsVector, DWORD* pidsArray, bool bail);
 		static const unsigned long BUFF_SIZE = 256;
 		static DWORD lastError_;
 	};
