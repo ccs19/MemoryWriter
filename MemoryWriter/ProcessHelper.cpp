@@ -24,7 +24,8 @@ namespace plexerCode {
 				if(result != nullptr) {
 					found = compareFileNames(&result, fileName);
 				}else {
-					LOG(DEBUG) << "Failed to open process " << GetLastError();
+					setLastError();
+					LOG(DEBUG) << "Failed to open process with PID " << *pid << ": " << ProcessConstants::errorToString(getLastError());
 				}
 				if(found) {
 					break;
@@ -36,7 +37,7 @@ namespace plexerCode {
 
 	bool ProcessHelper::compareFileNames(HANDLE* result, TCHAR* fileName) {
 		TCHAR name[MAX_PATH];
-		auto valid = false;
+		auto valid = 0;
 		auto getNameSuccess = GetProcessImageFileName(result, name, MAX_PATH);
 		if (getNameSuccess > 0) {
 			ProcString path(name);
@@ -108,6 +109,11 @@ namespace plexerCode {
 		if (bail) {
 			setLastError();
 		}
+	}
+
+	std::string getProcessName(HANDLE processHandle) {
+		LPTSTR str;
+		return nullptr;
 	}
 
 };
