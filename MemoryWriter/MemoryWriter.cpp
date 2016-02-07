@@ -19,10 +19,7 @@ int main()
 		LOG(INFO) << "SUCCESS!";
 	}
 	auto pids = plexerCode::ProcessHelper::getAllProcPids();
-	for (auto i = (*pids).begin(); i != (*pids).end(); ++i) {
-		
-	}
-	HANDLE result = ProcessHelper::getProcHandleByName(L"HelloWorldLoop");
+	auto result = ProcessHelper::getProcHandleByName(L"HelloWorldLoop");
 	if(result!= nullptr) {
 		LOG(DEBUG) << "FOUND!";
 	}

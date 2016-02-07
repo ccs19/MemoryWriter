@@ -3,17 +3,14 @@
 #include "plexerCodeUtil.h"
 #include "ProcessConstants.h"
 
-#ifndef UNICODE  
-#define P_HELPER_SLASH  "/\\"
-#else
 #define P_HELPER_SLASH  L"/\\"
-#endif
+
 
 namespace plexerCode {
 
 	DWORD ProcessHelper::lastError_ = 0;
 
-	HANDLE ProcessHelper::getProcHandleByName(TCHAR* fileName) {
+	HANDLE ProcessHelper::getProcHandleByName(const TCHAR* fileName) {
 		LOG(DEBUG) << "Searching for process handle for " << fileName;
 		auto pids = getAllProcPids();
 		auto found = false;
@@ -35,12 +32,12 @@ namespace plexerCode {
 		return result;
 	}
 
-	bool ProcessHelper::compareFileNames(HANDLE* result, TCHAR* fileName) {
+	bool ProcessHelper::compareFileNames(HANDLE* result,const TCHAR* fileName) {
 		TCHAR name[MAX_PATH];
 		auto valid = 0;
 		auto getNameSuccess = GetProcessImageFileName(result, name, MAX_PATH);
 		if (getNameSuccess > 0) {
-			ProcString path(name);
+			String path(name);
 			auto fileNameIndex = path.find_last_of(P_HELPER_SLASH);
 			if(fileNameIndex >= 0) {
 				auto fName = path.substr(fileNameIndex + 1);
@@ -58,11 +55,22 @@ namespace plexerCode {
 	}
 
 
+	bool ProcessHelper::reallocPidsBuffer(unsigned long& buffSize, std::vector<unsigned long>* pidsVector, DWORD*& pidsArray, DWORD bytesReturned) {
+		LOG(DEBUG) << "Allocating more memory for pid buffer. Tried " << buffSize << ". Will try " << buffSize * 2;
+		cleanGetAllProcPids(nullptr, pidsArray, false);
+		buffSize *= 2;
+		pidsArray = initDWord(buffSize);
+		if (!EnumProcesses(pidsArray, buffSize, &bytesReturned)) {
+			cleanGetAllProcPids(pidsVector, pidsArray, true);
+			return true;
+		}
+		return false;
+	}
 
 	/**
-	  * Returns an allocated vector containing all running process pids or
-	  * nullptr if failed. Call getLastError to see failure cause.
-	 **/
+		  * Returns an allocated vector containing all running process pids or
+		  * nullptr if failed. Call getLastError to see failure cause.
+		 **/
 	std::vector<DWORD>* ProcessHelper::getAllProcPids() {
 		auto buffSize = BUFF_SIZE;
 		auto pidsVector = new std::vector<DWORD>();
@@ -71,29 +79,23 @@ namespace plexerCode {
 		auto result = EnumProcesses(pidsArray, buffSize, &bytesReturned);
 		if (!result) {
 			cleanGetAllProcPids(pidsVector, pidsArray, true);
+			LOG(ERROR) << "Process enumeration failed.";
 		}
 		else {
-			while (true) {
+			auto loopFinished = false;
+			while (!loopFinished) {
 				if ((bytesReturned/sizeof DWORD) >= buffSize) {
-					LOG(DEBUG) << "Allocating more memory for pid buffer. Tried " << buffSize << ". Will try " << buffSize * 2;
-					cleanGetAllProcPids(nullptr, pidsArray, false);
-					buffSize *= 2;
-					pidsArray = initDWord(buffSize);
-					if (!EnumProcesses(pidsArray, buffSize, &bytesReturned)) {
-						cleanGetAllProcPids(pidsVector, pidsArray, true);
-						break;
-					}
+					loopFinished = reallocPidsBuffer(buffSize, pidsVector, pidsArray, bytesReturned);
 				}
 				else {
 					for (auto i = 0; i < (bytesReturned / sizeof DWORD); i++) {
 						pidsVector->push_back(pidsArray[i]);
 					}
-					break;
+					loopFinished = true;
 				}
 			}
 		}
 		cleanGetAllProcPids(nullptr, pidsArray, false);
-		pidsVector->shrink_to_fit();
 		return pidsVector;
 	}
 
