@@ -12,6 +12,6 @@
 #include <iostream>
 #include <windows.h>
 #include <bemapiset.h>
-
+#include <psapi.h>
 
 // TODO: reference additional headers your program requires here

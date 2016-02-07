@@ -33,6 +33,19 @@ bool plexerCode::Process::attachProcess(std::string name) {
 	return lastOpSucceed_;
 }
 
+bool plexerCode::Process::attachProcess(DWORD pid) {
+	procHandle_ = OpenProcess(PROCESS_ALL_ACCESS, true, pid);
+	if (procHandle_ == nullptr) {
+		lastOpSucceed_ = false;
+		setLastError();
+	}
+	else { //Successfully attached to process
+		lastOpSucceed_ = true;
+		handleOpen_ = true;
+	}
+	return lastOpSucceed_;
+}
+
 DWORD plexerCode::Process::getLastError() const {
 	return lastError_;
 }

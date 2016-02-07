@@ -1,7 +1,4 @@
 ﻿#pragma once
-#include <string>
-#include <bemapiset.h>
-
 
 namespace plexerCode{};
 
@@ -13,6 +10,7 @@ namespace plexerCode {
 		bool detachProcess() const;
 		bool isHandleOpen() const;
 		bool attachProcess(std::string name);
+		bool attachProcess(unsigned long pid);
 		DWORD getLastError() const;
 		std::string getFriendlyErrMsg() const;
 	private:
