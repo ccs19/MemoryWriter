@@ -91,16 +91,16 @@ namespace plexerCode {
 		auto result = EnumProcesses(pidsArray, buffSize, &bytesReturned);
 		if (!result) {
 			cleanGetAllProcPids(pidsVector, pidsArray, true);
-			LOG(ERROR) << "Process enumeration failed.";
+			LOG(ERROR) << "Process enumeration failed: " << ProcessConstants::errorToString(getLastError());
 		}
 		else {
 			auto loopFinished = false;
 			while (!loopFinished) {
-				if ((bytesReturned/sizeof DWORD) >= buffSize) {
+				if (bytesReturned >= buffSize * sizeof DWORD) {
 					loopFinished = reallocPidsBuffer(buffSize, pidsVector, pidsArray, bytesReturned);
 				}
 				else {
-					for (auto i = 0; i < (bytesReturned / sizeof DWORD); i++) {
+					for (auto i = 0; i < (bytesReturned / sizeof DWORD)+1; i++) {
 						pidsVector->push_back(pidsArray[i]);
 					}
 					loopFinished = true;

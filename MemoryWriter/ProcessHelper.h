@@ -17,7 +17,7 @@ namespace plexerCode {
 
 		static void setLastError() { lastError_ = GetLastError(); }
 		static void cleanGetAllProcPids(std::vector<DWORD>* pidsVector, DWORD* pidsArray, bool bail);
-		static const unsigned long BUFF_SIZE = 256;
+		static const unsigned long BUFF_SIZE = 1024;
 		static DWORD lastError_;
 	};
 };

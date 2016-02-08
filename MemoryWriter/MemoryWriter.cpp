@@ -23,12 +23,16 @@ int main()
 	if(result!= nullptr) {
 		LOG(DEBUG) << "FOUND!";
 	}
+	for (auto pid = (*pids).begin(); pid != (*pids).end();++pid) {
+		if (*pid == 19352)LOG(DEBUG) << *pid;
+	}
 	auto procName = ProcessHelper::getProcessName(result);
 	// {
 		//LOG(DEBUG) << "Proc name: " << procName;
 	//}else {
 		LOG(DEBUG) << "Failed: " << ProcessConstants::errorToString(ProcessHelper::getLastError());
 //	}
+		LOG(DEBUG) << "Vector len:" << pids->size();
 	getchar();
 }
 
