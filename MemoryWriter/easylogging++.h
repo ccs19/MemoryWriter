@@ -1745,7 +1745,7 @@ public:
     }
     virtual ~CommandLineArgs(void) {
 #ifdef _DEBUG
-		_CrtDumpMemoryLeaks();
+		//_CrtDumpMemoryLeaks();
 #endif
     }
     /// @brief Sets arguments and parses them

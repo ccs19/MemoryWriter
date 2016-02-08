@@ -76,7 +76,7 @@ namespace plexerCode {
 		LOG(DEBUG) << "Allocating more memory for pid buffer. Tried " << buffSize << ". Will try " << buffSize * 2;
 		cleanGetAllProcPids(nullptr, pidsArray, false);
 		buffSize *= 2;
-		pidsArray = initDWord(buffSize);
+		pidsArray = util::initDWord(buffSize);
 		if (!EnumProcesses(pidsArray, buffSize, &bytesReturned)) {
 			cleanGetAllProcPids(pidsVector, pidsArray, true);
 			return true;
@@ -91,7 +91,7 @@ namespace plexerCode {
 	std::shared_ptr<std::vector<DWORD>> ProcessHelper::getAllProcPids() {
 		auto buffSize = BUFF_SIZE;
 		auto pidsVector = std::make_shared<std::vector<DWORD>>();
-		auto pidsArray = initDWord(buffSize);
+		auto pidsArray = util::initDWord(buffSize);
 		DWORD bytesReturned = 0;
 		auto result = EnumProcesses(pidsArray, buffSize, &bytesReturned);
 		if (!result) {
