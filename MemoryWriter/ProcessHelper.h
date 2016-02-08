@@ -10,6 +10,7 @@ namespace plexerCode {
 		static std::vector<DWORD>* getAllProcPids();
 		static DWORD getLastError() { return lastError_; }
 		static String getProcessName(HANDLE processHandle);
+		static HANDLE getProcHandleByPid(DWORD desiredAccess,DWORD pid);
 
 	private:
 		static bool compareFileNames(HANDLE result,const TCHAR* fileName);

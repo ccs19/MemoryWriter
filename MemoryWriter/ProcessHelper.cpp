@@ -10,28 +10,33 @@ namespace plexerCode {
 
 	DWORD ProcessHelper::lastError_ = 0;
 
-	HANDLE ProcessHelper::getProcHandleByName(const TCHAR* fileName) {
-		LOG(DEBUG) << "Searching for process handle for " << fileName;
+	/*
+	Searches all processes and returns a handle to a process that matches procName with PROCESS_ALL_ACCESS
+	@procName The name of the process
+	@return The handle to the process or nullptr
+	Note: If multiple processes have the same name, the first process encountered is returned.
+	*/
+	HANDLE ProcessHelper::getProcHandleByName(const TCHAR* procName) {
+		LOG(DEBUG) << "Searching for process handle for " << procName;
 		auto pids = getAllProcPids();
 		auto found = false;
 		HANDLE result = nullptr;
 		if (pids) {
 			for (auto pid = (*pids).begin(); pid != (*pids).end(); ++pid) {
-				result = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, true, *pid);
+				result = getProcHandleByPid(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, *pid);
 				if(result != nullptr) {
-					found = compareFileNames(result, fileName);
-				}else {
-					setLastError();
-					LOG(ERROR) << "Failed to open process with PID " << *pid << ": " << ProcessConstants::errorToString(getLastError());
+					found = compareFileNames(result, procName);
 				}
 				if(found) {
-					LOG(DEBUG) << "Found matching process for " << fileName << " with PID " << *pid;
+					LOG(DEBUG) << "Found matching process for " << procName << " with PID " << *pid;
+					CloseHandle(result);
+					result = getProcHandleByPid(PROCESS_ALL_ACCESS,*pid);
 					break;
 				}
 			}
 		}
 		if(!found) {
-			LOG(DEBUG) << "Didn't find matching process for " << fileName;
+			LOG(DEBUG) << "Didn't find matching process for " << procName;
 			result = nullptr;
 		}
 		return result;
@@ -80,9 +85,9 @@ namespace plexerCode {
 	}
 
 	/**
-		  * Returns an allocated vector containing all running process pids or
-		  * nullptr if failed. Call getLastError to see failure cause.
-		 **/
+	* Returns an allocated vector containing all running process pids or
+	* nullptr if failed. Call getLastError to see failure cause.
+	**/
 	std::vector<DWORD>* ProcessHelper::getAllProcPids() {
 		auto buffSize = BUFF_SIZE;
 		auto pidsVector = new std::vector<DWORD>();
@@ -111,6 +116,7 @@ namespace plexerCode {
 		return pidsVector;
 	}
 
+
 	void ProcessHelper::cleanGetAllProcPids(std::vector<DWORD>* pidsVector, DWORD* pidsArray, bool bail) {
 		if (pidsVector != nullptr) {
 			delete(pidsVector);
@@ -125,7 +131,11 @@ namespace plexerCode {
 		}
 	}
 
-	
+	/*
+	Returns the full Windows name of the specified handle
+	@processHandle process to check
+	@return The full path (e.g. C:\full\path\to\program.exe) or an empty string if failure.
+	*/
 	String ProcessHelper::getProcessName(HANDLE processHandle) {
 		TCHAR nameBuffer[MAX_PATH];
 		DWORD nameBufferSize = MAX_PATH;
@@ -142,4 +152,19 @@ namespace plexerCode {
 		return procName;
 	}
 
+	
+	/*
+	Returns process handle with desired access level
+	@desiredAccess Desired access level
+	@pid PID of process
+	@return Handle to process, or null. If failure occurs, last error is set.
+	*/
+	HANDLE ProcessHelper::getProcHandleByPid(DWORD desiredAccess, DWORD pid) {
+		auto process = OpenProcess(PROCESS_ALL_ACCESS, true, pid);
+		if(process == nullptr) {
+			setLastError();
+			LOG(ERROR) << "Failed to open process with PID " << pid << ": " << ProcessConstants::errorToString(getLastError());
+		}
+		return process;
+	}
 };
