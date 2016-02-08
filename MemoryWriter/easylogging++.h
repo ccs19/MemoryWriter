@@ -15,6 +15,17 @@
 //
 #ifndef EASYLOGGINGPP_H
 #define EASYLOGGINGPP_H
+
+#if _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif
+
 // Compilers and C++0x/C++11 Evaluation
 #if defined(__GNUC__)
 #   define ELPP_COMPILER_GCC 1
@@ -1732,7 +1743,11 @@ public:
     CommandLineArgs(int argc, char** argv) {
         setArgs(argc, argv);
     }
-    virtual ~CommandLineArgs(void) {}
+    virtual ~CommandLineArgs(void) {
+#ifdef _DEBUG
+		_CrtDumpMemoryLeaks();
+#endif
+    }
     /// @brief Sets arguments and parses them
     inline void setArgs(int argc, const char** argv) {
         setArgs(argc, const_cast<char**>(argv));
@@ -3959,6 +3974,7 @@ public:
         base::utils::safeDelete(m_registeredLoggers);
         ELPP_INTERNAL_INFO(5, "Destroying vRegistry");
         base::utils::safeDelete(m_vRegistry);
+
     }
 
     inline bool validateEveryNCounter(const char* filename, unsigned long int lineNumber, std::size_t occasion) {

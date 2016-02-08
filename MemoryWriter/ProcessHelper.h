@@ -7,7 +7,7 @@ namespace plexerCode {
 	class ProcessHelper {
 	public:
 		static HANDLE getProcHandleByName(const TCHAR* fileName);
-		static std::vector<DWORD>* getAllProcPids();
+		static std::shared_ptr<std::vector<DWORD>> getAllProcPids();
 		static DWORD getLastError() { return lastError_; }
 		static String getProcessName(HANDLE processHandle);
 		static HANDLE getProcHandleByPid(DWORD desiredAccess,DWORD pid);

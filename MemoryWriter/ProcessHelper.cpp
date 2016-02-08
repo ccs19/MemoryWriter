@@ -88,21 +88,21 @@ namespace plexerCode {
 	* Returns an allocated vector containing all running process pids or
 	* nullptr if failed. Call getLastError to see failure cause.
 	**/
-	std::vector<DWORD>* ProcessHelper::getAllProcPids() {
+	std::shared_ptr<std::vector<DWORD>> ProcessHelper::getAllProcPids() {
 		auto buffSize = BUFF_SIZE;
-		auto pidsVector = new std::vector<DWORD>();
+		auto pidsVector = std::make_shared<std::vector<DWORD>>();
 		auto pidsArray = initDWord(buffSize);
 		DWORD bytesReturned = 0;
 		auto result = EnumProcesses(pidsArray, buffSize, &bytesReturned);
 		if (!result) {
-			cleanGetAllProcPids(pidsVector, pidsArray, true);
+			cleanGetAllProcPids(nullptr, pidsArray, true);
 			LOG(ERROR) << "Process enumeration failed: " << ProcessConstants::errorToString(getLastError());
 		}
 		else {
 			auto loopFinished = false;
 			while (!loopFinished) {
 				if (bytesReturned >= buffSize * sizeof DWORD) {
-					loopFinished = reallocPidsBuffer(buffSize, pidsVector, pidsArray, bytesReturned);
+					loopFinished = reallocPidsBuffer(buffSize, nullptr, pidsArray, bytesReturned);
 				}
 				else {
 					for (auto i = 0; i < (bytesReturned / sizeof DWORD)+1; i++) {
@@ -160,7 +160,7 @@ namespace plexerCode {
 	@return Handle to process, or null. If failure occurs, last error is set.
 	*/
 	HANDLE ProcessHelper::getProcHandleByPid(DWORD desiredAccess, DWORD pid) {
-		auto process = OpenProcess(PROCESS_ALL_ACCESS, true, pid);
+		auto process = OpenProcess(desiredAccess, true, pid);
 		if(process == nullptr) {
 			setLastError();
 			LOG(ERROR) << "Failed to open process with PID " << pid << ": " << ProcessConstants::errorToString(getLastError());

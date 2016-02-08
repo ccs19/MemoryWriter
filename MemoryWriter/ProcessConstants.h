@@ -14,7 +14,7 @@ namespace plexerCode {
 		enum Error {
 			access_denied = 5, invalid_parameter = 87,
 			invalid_handle = 6, partial_copy = 299
-	};
+		};
 
 	public:
 
@@ -40,6 +40,7 @@ namespace plexerCode {
 			oss << " (" << errorNum << ")\0";
 			return oss.str();
 		}
+
 
 
 	private:

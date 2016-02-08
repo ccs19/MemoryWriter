@@ -4,14 +4,22 @@
 #include "stdafx.h"
 #include "Process.h"
 #include "ProcessHelper.h"
-
-
 INITIALIZE_EASYLOGGINGPP
+
+
+
+
+
 using namespace plexerCode;
 int main()
 {
+	
 	el::Configurations conf("logger.cfg");
 	el::Loggers::reconfigureAllLoggers(conf);
+
+
+
+
 	plexerCode::Process process;
 	if(!process.attachProcess("HelloWorldLoop")) {
 		//std::cout << process.getFriendlyErrMsg() << std::endl;
@@ -30,7 +38,8 @@ int main()
 		LOG(DEBUG) << "Failed: " << ProcessConstants::errorToString(ProcessHelper::getLastError());	
 	}
 	LOG(DEBUG) << "Vector len:" << pids->size();
-	getchar();
+
+
 }
 
 
