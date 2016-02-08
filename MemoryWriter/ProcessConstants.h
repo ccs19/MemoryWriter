@@ -13,7 +13,7 @@ namespace plexerCode {
 	class ProcessConstants {
 		enum Error {
 			access_denied = 5, invalid_parameter = 87,
-			invalid_handle = 6, 
+			invalid_handle = 6, partial_copy = 299
 	};
 
 	public:
@@ -30,6 +30,9 @@ namespace plexerCode {
 				break;
 			case invalid_handle:
 				oss << "Invalid Handle";
+				break;
+			case partial_copy:
+				oss << "Partial Copy";
 				break;
 			default:
 				oss << "Unknown error";

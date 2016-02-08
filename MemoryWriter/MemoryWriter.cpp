@@ -23,6 +23,12 @@ int main()
 	if(result!= nullptr) {
 		LOG(DEBUG) << "FOUND!";
 	}
+	auto procName = ProcessHelper::getProcessName(result);
+	// {
+		//LOG(DEBUG) << "Proc name: " << procName;
+	//}else {
+		LOG(DEBUG) << "Failed: " << ProcessConstants::errorToString(ProcessHelper::getLastError());
+//	}
 	getchar();
 }
 

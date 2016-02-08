@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "stdafx.h"
 #include <vector>
+#include "ProcessConstants.h"
 
 namespace plexerCode {
 	class ProcessHelper {
@@ -8,9 +9,10 @@ namespace plexerCode {
 		static HANDLE getProcHandleByName(const TCHAR* fileName);
 		static std::vector<DWORD>* getAllProcPids();
 		static DWORD getLastError() { return lastError_; }
+		static String getProcessName(HANDLE processHandle);
 
 	private:
-		static bool compareFileNames(HANDLE* result,const TCHAR* fileName);
+		static bool compareFileNames(HANDLE result,const TCHAR* fileName);
 		static bool reallocPidsBuffer(unsigned long& buffSize, std::vector<unsigned long>* pidsVector, DWORD*& pidsArray, DWORD bytesReturned);
 
 		static void setLastError() { lastError_ = GetLastError(); }

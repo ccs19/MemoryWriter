@@ -17,41 +17,53 @@ namespace plexerCode {
 		HANDLE result = nullptr;
 		if (pids) {
 			for (auto pid = (*pids).begin(); pid != (*pids).end(); ++pid) {
-				result = OpenProcess(PROCESS_QUERY_INFORMATION, true, *pid);
+				result = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, true, *pid);
 				if(result != nullptr) {
-					found = compareFileNames(&result, fileName);
+					found = compareFileNames(result, fileName);
 				}else {
 					setLastError();
-					LOG(DEBUG) << "Failed to open process with PID " << *pid << ": " << ProcessConstants::errorToString(getLastError());
+					LOG(ERROR) << "Failed to open process with PID " << *pid << ": " << ProcessConstants::errorToString(getLastError());
 				}
 				if(found) {
+					LOG(DEBUG) << "Found matching process for " << fileName << " with PID " << *pid;
 					break;
 				}
 			}
 		}
+		if(!found) {
+			LOG(DEBUG) << "Didn't find matching process for " << fileName;
+			result = nullptr;
+		}
 		return result;
 	}
 
-	bool ProcessHelper::compareFileNames(HANDLE* result,const TCHAR* fileName) {
+	bool ProcessHelper::compareFileNames(HANDLE result,const TCHAR* fileName) {
 		TCHAR name[MAX_PATH];
-		auto valid = 0;
+		auto valid = -1;
 		auto getNameSuccess = GetProcessImageFileName(result, name, MAX_PATH);
 		if (getNameSuccess > 0) {
 			String path(name);
+			String fName(L"");
 			auto fileNameIndex = path.find_last_of(P_HELPER_SLASH);
+			
 			if(fileNameIndex >= 0) {
-				auto fName = path.substr(fileNameIndex + 1);
-				valid = fName.compare(fileName);
-				LOG(DEBUG) << "Process name: " << fName;
+				fName.append(path.substr(fileNameIndex + 1));
+				auto extensionIndex = fName.find_last_of(L"."); //Ignore file extension
+				if (extensionIndex > 0) {
+					fName = fName.substr(0, extensionIndex);
+					valid = fName.compare(fileName);
+				}
 			}
+			LOG(DEBUG) << "Process name: " << fName;
 		} 
 		else {
 			setLastError();
+			LOG(ERROR) << "Failed to get process name: " << ProcessConstants::errorToString(getLastError());
 		}
-		if(!valid && result != nullptr && getNameSuccess) {
+		if(valid != 0 && result != nullptr) {
 			CloseHandle(result);
 		}
-		return valid;
+		return valid == 0 ? true : false;
 	}
 
 
@@ -113,9 +125,20 @@ namespace plexerCode {
 		}
 	}
 
-	std::string getProcessName(HANDLE processHandle) {
-		LPTSTR str;
-		return nullptr;
+	
+	String ProcessHelper::getProcessName(HANDLE processHandle) {
+		TCHAR nameBuffer[MAX_PATH];
+		String procName(L"");
+		DWORD result = 0;
+ 		if(processHandle != nullptr) {
+			result = GetModuleBaseName(processHandle, GetModuleHandle(nullptr), nameBuffer, MAX_PATH);
+			if(result == 0) {
+				setLastError();
+			}else {
+				procName.append(nameBuffer);
+			}
+		}
+		return procName;
 	}
 
 };
