@@ -128,10 +128,11 @@ namespace plexerCode {
 	
 	String ProcessHelper::getProcessName(HANDLE processHandle) {
 		TCHAR nameBuffer[MAX_PATH];
+		DWORD nameBufferSize = MAX_PATH;
 		String procName(L"");
 		DWORD result = 0;
  		if(processHandle != nullptr) {
-			result = GetModuleBaseName(processHandle, GetModuleHandle(nullptr), nameBuffer, MAX_PATH);
+			result = QueryFullProcessImageName(processHandle,0,nameBuffer, &nameBufferSize);
 			if(result == 0) {
 				setLastError();
 			}else {
