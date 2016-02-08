@@ -1,12 +1,12 @@
 ﻿#include "stdafx.h"
 
 #include "Process.h"
-plexerCode::Process::Process() {
-	init();
+plexerCode::Process::Process(HANDLE handle) {
+	procHandle_ = handle;
 }
 
 plexerCode::Process::~Process() {
-	CloseHandle(procHandle_);
+	detachProcess();
 }
 
 BOOL plexerCode::Process::detachProcess() const {
@@ -21,39 +21,10 @@ BOOL plexerCode::Process::isHandleOpen() const {
 	return handleOpen_;
 }
 
-BOOL plexerCode::Process::attachProcess(std::string name) {
-	procHandle_ = OpenProcess(PROCESS_ALL_ACCESS, true, 19352);
-	if(procHandle_ == nullptr) {
-		lastOpSucceed_ = false;
-		handleOpen_ = true;
-		setLastError();
-	}else {
-		lastOpSucceed_ = true;
-	}
-	return lastOpSucceed_;
-}
-
-BOOL plexerCode::Process::attachProcess(DWORD pid) {
-	procHandle_ = OpenProcess(PROCESS_ALL_ACCESS, true, pid);
-	if (procHandle_ == nullptr) {
-		lastOpSucceed_ = false;
-		setLastError();
-	}
-	else { //Successfully attached to process
-		lastOpSucceed_ = true;
-		handleOpen_ = true;
-	}
-	return lastOpSucceed_;
-}
-
 DWORD plexerCode::Process::getLastError() const {
 	return lastError_;
 }
 
-std::string plexerCode::Process::getFriendlyErrMsg() const {
-	std::string msg = "Last attempting operation on process failed. Reason: " + getLastError();
-	return msg;
-}
 
 void plexerCode::Process::setLastError() {
 	lastError_ = GetLastError();

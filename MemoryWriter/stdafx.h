@@ -4,15 +4,20 @@
 //
 
 #pragma once
-
-
+#include <windows.h>
+#ifdef _DEBUG
+#include <crtdbg.h>
+//#include <debugapi.h>
+#endif
+#include <stdlib.h>
+#include <sstream>
 #include "LeakCheck.h"
 #include "targetver.h"
-
+#include "StringDefines.h"
 #include <stdio.h>
 #include <tchar.h>
 #include <iostream>
-#include <windows.h>
+
 #include <bemapiset.h>
 #include <psapi.h>
 #include <memory>

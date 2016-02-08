@@ -1,12 +1,5 @@
 #pragma once
-#include <string>
-
-#ifndef UNICODE  
-typedef std::string String;
-#else
-typedef std::wstring String;
-#endif
-
+#include "StringDefines.h"
 
 namespace plexerCode {
 	

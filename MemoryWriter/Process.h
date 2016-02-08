@@ -5,14 +5,12 @@ namespace plexerCode{};
 namespace plexerCode {
 	class Process {
 	public:
-		Process();
+		Process(HANDLE handle);
 		~Process();
 		BOOL detachProcess() const;
+		void setProcHandle(const HANDLE procHandle) { procHandle_ = procHandle; }
 		BOOL isHandleOpen() const;
-		BOOL attachProcess(std::string name);
-		BOOL attachProcess(DWORD pid);
 		DWORD getLastError() const;
-		std::string getFriendlyErrMsg() const;
 	private:
 		HANDLE procHandle_;
 		unsigned long processNum_;
