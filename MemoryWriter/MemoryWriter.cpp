@@ -28,7 +28,14 @@ int main()
 		LOG(DEBUG) << "Failed: " << ProcessConstants::errorToString(ProcessHelper::getLastError());	
 	}
 	LOG(DEBUG) << "Vector len:" << pids->size();
+	
+	if (result) {
+		Process proc(result);
+		proc.killProcess();
+		proc.killProcess();
+	}
 
+	getchar();
 }
 
 

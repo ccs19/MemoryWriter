@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 
 #include "Process.h"
+#include "ProcessHelper.h"
+
 plexerCode::Process::Process(HANDLE handle) {
 	procHandle_ = handle;
 }
@@ -25,6 +27,35 @@ DWORD plexerCode::Process::getLastError() const {
 	return lastError_;
 }
 
+BOOL plexerCode::Process::killProcess() {
+	DWORD exitCode = 0;
+	BOOL success = false;
+	if(GetExitCodeProcess(procHandle_, &exitCode)) {
+		if(exitCode == STILL_ACTIVE) {
+			success = killAndWait();
+		}else {
+			LOG(DEBUG) << "Process not active.(Code: " << exitCode << ")";
+		}
+	}else {
+		LOG(ERROR) << "GetExitCodeProcess failed.";
+	}
+	return success;
+}
+
+BOOL plexerCode::Process::killAndWait() {
+	LOG(DEBUG) << "Process still alive. Terminating.";
+	BOOL success = false;
+	if (TerminateProcess(procHandle_, ERROR_SUCCESS)) {
+		LOG(DEBUG) << "Sent exit signal to process. Waiting...";
+		auto result = WaitForSingleObject(procHandle_, ProcessConstants::WAIT_KILL_TIMEOUT);
+		LOG(DEBUG) << "WFSO result: " << ProcessConstants::waitForSingleResultStr(result);
+	}
+	else {
+		setLastError();
+		LOG(ERROR) << "Failed to terminate process. " << ProcessConstants::errorToString(getLastError());
+	}
+	return success;
+}
 
 void plexerCode::Process::setLastError() {
 	lastError_ = GetLastError();

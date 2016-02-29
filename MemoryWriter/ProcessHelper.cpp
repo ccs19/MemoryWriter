@@ -17,6 +17,7 @@ namespace plexerCode {
 	Note: If multiple processes have the same name, the first process encountered is returned.
 	*/
 	HANDLE ProcessHelper::getProcHandleByName(const TCHAR* procName) {
+		//TODO refactor
 		LOG(DEBUG) << "Searching for process handle for " << procName;
 		auto pids = getAllProcPids();
 		auto found = false;
@@ -42,6 +43,7 @@ namespace plexerCode {
 		return result;
 	}
 
+	//TODO refactor
 	bool ProcessHelper::compareFileNames(HANDLE result,const TCHAR* fileName) {
 		TCHAR name[MAX_PATH];
 		auto valid = -1;
@@ -105,7 +107,7 @@ namespace plexerCode {
 					loopFinished = reallocPidsBuffer(buffSize, nullptr, pidsArray, bytesReturned);
 				}
 				else {
-					for (auto i = 0; i < (bytesReturned / sizeof DWORD)+1; i++) {
+					for (unsigned int i = 0; i < (bytesReturned / sizeof DWORD)+1; i++) {
 						pidsVector->push_back(pidsArray[i]);
 					}
 					loopFinished = true;

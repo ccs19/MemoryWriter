@@ -11,6 +11,8 @@ namespace plexerCode {
 		void setProcHandle(const HANDLE procHandle) { procHandle_ = procHandle; }
 		BOOL isHandleOpen() const;
 		DWORD getLastError() const;
+		BOOL killProcess();
+		BOOL killAndWait();
 	private:
 		HANDLE procHandle_;
 		unsigned long processNum_;
