@@ -21,6 +21,7 @@ Process handle = PC_HANDLE
 #define PC_READ_ACCESS PROCESS_QUERY_INFORMATION | PROCESS_VM_READ 
 #define PC_FULL_ACCESS PROCESS_ALL_ACCESS
 #define PC_CHAR TCHAR
+#include <WinBase.h>
 #endif //defined(MSC_VER)
 #if defined(__linux) || defined(__linux__)
 
