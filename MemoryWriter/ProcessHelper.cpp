@@ -22,16 +22,17 @@ namespace plexerCode {
 		auto pids = getAllProcPids();
 		auto found = false;
 		Process *result = nullptr;
+		PC_HANDLE handle;
 		if (pids) {
 			for (auto pid = (*pids).begin(); pid != (*pids).end(); ++pid) {
-				result = getProcessByPid(PC_READ_ACCESS, *pid);
-				if(result != nullptr) {
+				handle = getProcessByPid(PC_READ_ACCESS, *pid);
+				if(handle != nullptr) {
 					found = compareFileNames(result, procName);
 				}
 				if(found) {
 					LOG(DEBUG) << "Found matching process for " << procName << " with PID " << *pid;
-					CloseHandle(result);
-					result = getProcessByPid(PC_FULL_ACCESS,*pid);
+					CloseHandle(handle);
+					handle = getProcessByPid(PC_FULL_ACCESS,*pid);
 					break;
 				}
 			}
@@ -133,6 +134,10 @@ namespace plexerCode {
 		}
 	}
 
+	void ProcessHelper::closeHandle(HANDLE handle) {
+		CloseHandle(handle);
+	}
+
 	/*
 	Returns the full Windows name of the specified handle
 	@processHandle process to check
@@ -161,13 +166,13 @@ namespace plexerCode {
 	@pid PID of process
 	@return Handle to process, or null. If failure occurs, last error is set.
 	*/
-	Process* ProcessHelper::getProcessByPid(PC_ACCESS_TYPE desiredAccess, PC_PID pid) {
+	PC_HANDLE ProcessHelper::getProcessByPid(PC_ACCESS_TYPE desiredAccess, PC_PID pid) {
 		auto process = OpenProcess(desiredAccess, true, pid);
 		if(process == nullptr) {
 			setLastError();
 			LOG(ERROR) << "Failed to open process with PID " << pid << ": " << ProcessConstants::errorToString(getLastError());
 		}
-		return new Process(process);
+		return process;
 	}
 
 	DWORD ProcessHelper::getProcessId(HANDLE procHandle) {
