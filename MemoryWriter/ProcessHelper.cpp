@@ -16,36 +16,36 @@ namespace plexerCode {
 	@return The handle to the process or nullptr
 	Note: If multiple processes have the same name, the first process encountered is returned.
 	*/
-	HANDLE ProcessHelper::getProcHandleByName(const TCHAR* procName) {
+	Process* ProcessHelper::getProcessByName(const PC_CHAR* procName) {
 		//TODO refactor
 		LOG(DEBUG) << "Searching for process handle for " << procName;
 		auto pids = getAllProcPids();
 		auto found = false;
-		HANDLE result = nullptr;
+		Process *result = nullptr;
 		if (pids) {
 			for (auto pid = (*pids).begin(); pid != (*pids).end(); ++pid) {
-				result = getProcHandleByPid(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, *pid);
+				result = getProcessByPid(PC_READ_ACCESS, *pid);
 				if(result != nullptr) {
 					found = compareFileNames(result, procName);
 				}
 				if(found) {
 					LOG(DEBUG) << "Found matching process for " << procName << " with PID " << *pid;
 					CloseHandle(result);
-					result = getProcHandleByPid(PROCESS_ALL_ACCESS,*pid);
+					result = getProcessByPid(PC_FULL_ACCESS,*pid);
 					break;
 				}
 			}
 		}
 		if(!found) {
 			LOG(DEBUG) << "Didn't find matching process for " << procName;
-			result = nullptr;
+			return nullptr;
 		}
 		return result;
 	}
 
 	//TODO refactor
-	bool ProcessHelper::compareFileNames(HANDLE result,const TCHAR* fileName) {
-		TCHAR name[MAX_PATH];
+	bool ProcessHelper::compareFileNames(PC_HANDLE result,const PC_CHAR* fileName) {
+		PC_CHAR name[MAX_PATH];
 		auto valid = -1;
 		auto getNameSuccess = GetProcessImageFileName(result, name, MAX_PATH);
 		if (getNameSuccess > 0) {
@@ -90,9 +90,9 @@ namespace plexerCode {
 	* Returns an allocated vector containing all running process pids or
 	* nullptr if failed. Call getLastError to see failure cause.
 	**/
-	std::shared_ptr<std::vector<DWORD>> ProcessHelper::getAllProcPids() {
+	std::shared_ptr<std::vector<PC_PID>> ProcessHelper::getAllProcPids() {
 		auto buffSize = BUFF_SIZE;
-		auto pidsVector = std::make_shared<std::vector<DWORD>>();
+		auto pidsVector = std::make_shared<std::vector<PC_PID>>();
 		auto pidsArray = util::initDWord(buffSize);
 		DWORD bytesReturned = 0;
 		auto result = EnumProcesses(pidsArray, buffSize, &bytesReturned);
@@ -103,11 +103,11 @@ namespace plexerCode {
 		else {
 			auto loopFinished = false;
 			while (!loopFinished) {
-				if (bytesReturned >= buffSize * sizeof DWORD) {
+				if (bytesReturned >= buffSize * sizeof PC_PID) {
 					loopFinished = reallocPidsBuffer(buffSize, nullptr, pidsArray, bytesReturned);
 				}
 				else {
-					for (unsigned int i = 0; i < (bytesReturned / sizeof DWORD)+1; i++) {
+					for (unsigned int i = 0; i < (bytesReturned / sizeof PC_PID)+1; i++) {
 						pidsVector->push_back(pidsArray[i]);
 					}
 					loopFinished = true;
@@ -119,7 +119,7 @@ namespace plexerCode {
 	}
 
 
-	void ProcessHelper::cleanGetAllProcPids(std::vector<DWORD>* pidsVector, DWORD* pidsArray, bool bail) {
+	void ProcessHelper::cleanGetAllProcPids(std::vector<PC_PID>* pidsVector, PC_PID* pidsArray, bool bail) {
 		if (pidsVector != nullptr) {
 			delete(pidsVector);
 			pidsVector = nullptr;
@@ -138,7 +138,7 @@ namespace plexerCode {
 	@processHandle process to check
 	@return The full path (e.g. C:\full\path\to\program.exe) or an empty string if failure.
 	*/
-	String ProcessHelper::getProcessName(HANDLE processHandle) {
+	String ProcessHelper::getProcessName(PC_HANDLE processHandle) {
 		TCHAR nameBuffer[MAX_PATH];
 		DWORD nameBufferSize = MAX_PATH;
 		String procName(L"");
@@ -161,12 +161,16 @@ namespace plexerCode {
 	@pid PID of process
 	@return Handle to process, or null. If failure occurs, last error is set.
 	*/
-	HANDLE ProcessHelper::getProcHandleByPid(DWORD desiredAccess, DWORD pid) {
+	Process* ProcessHelper::getProcessByPid(PC_ACCESS_TYPE desiredAccess, PC_PID pid) {
 		auto process = OpenProcess(desiredAccess, true, pid);
 		if(process == nullptr) {
 			setLastError();
 			LOG(ERROR) << "Failed to open process with PID " << pid << ": " << ProcessConstants::errorToString(getLastError());
 		}
-		return process;
+		return new Process(process);
+	}
+
+	DWORD ProcessHelper::getProcessId(HANDLE procHandle) {
+		return GetProcessId(procHandle);
 	}
 };

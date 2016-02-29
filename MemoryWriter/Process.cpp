@@ -3,7 +3,7 @@
 #include "Process.h"
 #include "ProcessHelper.h"
 
-plexerCode::Process::Process(HANDLE handle) {
+plexerCode::Process::Process(PC_HANDLE handle) {
 	procHandle_ = handle;
 }
 
@@ -23,12 +23,12 @@ BOOL plexerCode::Process::isHandleOpen() const {
 	return handleOpen_;
 }
 
-DWORD plexerCode::Process::getLastError() const {
+PC_RESULT_CODE plexerCode::Process::getLastError() const {
 	return lastError_;
 }
 
 BOOL plexerCode::Process::killProcess() {
-	DWORD exitCode = 0;
+	PC_RESULT_CODE exitCode = 0;
 	BOOL success = false;
 	if(GetExitCodeProcess(procHandle_, &exitCode)) {
 		if(exitCode == STILL_ACTIVE) {
@@ -57,6 +57,15 @@ BOOL plexerCode::Process::killAndWait() {
 	return success;
 }
 
+String plexerCode::Process::getProcessName() {
+	return ProcessHelper::getProcessName(procHandle_);
+}
+
+PC_PID plexerCode::Process::getProcessId() {
+	return ProcessHelper::getProcessId(procHandle_);
+}
+
+
 void plexerCode::Process::setLastError() {
 	lastError_ = GetLastError();
 }
@@ -68,3 +77,5 @@ void plexerCode::Process::init() {
 	processNum_ = 0;
 	handleOpen_ = false;
 }
+
+

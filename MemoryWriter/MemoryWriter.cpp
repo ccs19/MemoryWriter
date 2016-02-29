@@ -17,7 +17,7 @@ int main()
 	el::Loggers::reconfigureAllLoggers(conf);
 
 	auto pids = plexerCode::ProcessHelper::getAllProcPids();
-	auto result = ProcessHelper::getProcHandleByName(L"HelloWorldLoop");
+	auto result = ProcessHelper::getProcessByName(L"HelloWorldLoop");
 	if(result!= nullptr) {
 		LOG(DEBUG) << "FOUND!";
 	}
