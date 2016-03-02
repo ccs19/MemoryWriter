@@ -22,6 +22,13 @@ Process handle = PC_HANDLE
 #define PC_FULL_ACCESS PROCESS_ALL_ACCESS
 #define PC_CHAR TCHAR
 #include <WinBase.h>
+#ifdef  PC_EXPORT_DLL 
+/*Enabled as "export" while compiling the dll project*/
+#define DLLEXPORT __declspec(dllexport)  
+#else
+/*Enabled as "import" in the Client side for using already created dll file*/
+#define DLLEXPORT __declspec(dllimport)  
+#endif
 #endif //defined(MSC_VER)
 #if defined(__linux) || defined(__linux__)
 

@@ -7,9 +7,8 @@
 #include "plexerCodeUtil.h"
 
 MEM_LEAK_CHECK
-
 INITIALIZE_EASYLOGGINGPP
-
+/**
 using namespace plexerCode;
 int main()
 {
@@ -37,5 +36,5 @@ int main()
 
 	getchar();
 }
-
+**/
 

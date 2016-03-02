@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B82E794C-B6F2-4610-9723-F8B6CBBD58E4}</ProjectGuid>
+    <ProjectGuid>{A4F6B406-D402-4C21-B8DD-8269B1DFA9DF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>MemoryWriter</RootNamespace>
+    <RootNamespace>MemoryWriterTests</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -39,7 +39,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -69,7 +69,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
@@ -86,10 +88,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\chris_000\Documents\Visual Studio 2015\Projects\MemoryWriter\MemoryWriter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>C:\Users\chris_000\Documents\Visual Studio 2015\Projects\MemoryWriter\MemoryWriter;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\chris_000\Documents\Visual Studio 2015\Projects\MemoryWriter\MemoryWriter;C:\Users\chris_000\Documents\Visual Studio 2015\Projects\MemoryWriter\MemoryWriter\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -97,7 +102,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);PC_EXPORT_DLL</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
@@ -143,29 +148,28 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\MemoryWriter\easylogging++.h" />
+    <ClInclude Include="..\MemoryWriter\plexerCodeUtil.h" />
+    <ClInclude Include="..\MemoryWriter\Process.h" />
+    <ClInclude Include="..\MemoryWriter\ProcessConstants.h" />
+    <ClInclude Include="..\MemoryWriter\ProcessHelper.h" />
+    <ClInclude Include="..\MemoryWriter\stdafx.h" />
+    <ClInclude Include="..\MemoryWriter\StringDefines.h" />
+    <ClInclude Include="..\MemoryWriter\targetver.h" />
     <ClInclude Include="catch.hpp" />
-    <ClInclude Include="D:\CDev\easyloggingpp_9.80\easylogging++.h" />
-    <ClInclude Include="LeakCheck.h" />
-    <ClInclude Include="logger.cfg" />
-    <ClInclude Include="plexerCodeUtil.h" />
-    <ClInclude Include="Process.h" />
-    <ClInclude Include="ProcessConstants.h" />
-    <ClInclude Include="ProcessHelper.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StringDefines.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TestCase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MemoryWriter.cpp" />
-    <ClCompile Include="Process.cpp" />
-    <ClCompile Include="ProcessHelper.cpp" />
+    <ClCompile Include="..\MemoryWriter\Process.cpp" />
+    <ClCompile Include="..\MemoryWriter\ProcessHelper.cpp" />
+    <ClCompile Include="ProcessHelperTest.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UnitTest.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

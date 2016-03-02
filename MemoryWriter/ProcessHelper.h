@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿
+#pragma once
 #include "stdafx.h"
 #include <vector>
 #include "ProcessConstants.h"
@@ -7,7 +8,7 @@
 namespace plexerCode {
 	//class Process;
 
-	class ProcessHelper {
+	class DLLEXPORT ProcessHelper {
 	public:
 		static Process* getProcessByName(const PC_CHAR* fileName);
 		static std::shared_ptr<std::vector<PC_PID>> getAllProcPids();
